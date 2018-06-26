@@ -71,4 +71,18 @@ Boot both the Server and Client apps and you're in the business. Enter any usern
 
 ![alt text](https://github.com/RatneshChauhan/springboot-react-chatroom/blob/master/Client/chat-box.png "Chat Room")
 
+Author
+=============
+Ratnesh Chauhan, Full Stack Developer
+
+Note: Everything is tested on Windows environment
+
+License
+==============
+The MIT License (MIT)
+
+Copyright (c) 2018 Ratnesh Chauhan
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this application and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so.
+
 
