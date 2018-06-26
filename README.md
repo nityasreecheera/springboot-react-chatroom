@@ -75,7 +75,7 @@ Author
 =============
 Ratnesh Chauhan, Full Stack Developer
 
-Note: Everything is tested on Windows environment
+Note: Everything is tested on Windows environment on Laptop device
 
 License
 ==============
