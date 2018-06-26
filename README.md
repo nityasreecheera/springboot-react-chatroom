@@ -44,7 +44,7 @@ Client Configuration: The front end of the application has been developed using 
 
 * Rest of the code is used to display and format the messages on the screen.
 
-React Setup Prerequisites
+React Setup Prerequisites and Dependencies
 ==========================
 Node
 
