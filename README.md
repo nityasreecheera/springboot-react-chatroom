@@ -63,5 +63,5 @@ Setting up the proxy
 
 To have the Webpack development server proxy our requests to our Server, we just need to add the following line to package.json:
 
-<code>"proxy": "http://localhost:3001/", </code>
+<code>"proxy": "http://localhost:8080/", </code>
 
