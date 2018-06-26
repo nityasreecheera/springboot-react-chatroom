@@ -1,0 +1,93 @@
+
+.bubble .bubble-avatar {
+  float: left;
+  margin-left: -125px;
+  margin-top: -15px;
+  font-size: 75px;
+}
+.bubble {
+  position: relative;
+  width: 145px;
+  overflow-wrap: break-word;
+  height: auto;
+  min-height: 50px;
+  padding: 0.5em;
+  background: mediumseagreen;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  border: #000000 solid 3px;
+  margin-left: 380px;
+}
+
+.bubble:before {
+  font-size: 10em;
+  content: '';
+  position: absolute;
+  border-style: solid;
+  border-width: 17px 17px 17px 0;
+  border-color: transparent #000000;
+  display: block;
+  width: 0;
+  z-index: 0;
+  top: 31px;
+}
+
+
+.me::before {
+  left: -20px;         
+}
+
+.you::before {
+  right: -20px;
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-180deg);    
+}
+
+.you {
+  margin-left: 1000px;
+}
+
+#notificationContainer{
+  width:100px;
+  overflow-wrap: break-word;
+
+}
+
+#online-offline{
+     margin-left: 130%;
+    margin-top: -25%;
+}
+
+#wrapper_1 {
+  background-color: black;
+  height: 100px;
+  float: left;
+  width: 100px;
+  overflow-wrap: break-word;
+  margin-top: -18px;
+}
+#wrapper_1:after {
+    content: "";
+    background-color: #000;
+    position: absolute;
+    width: 5px;
+    height: 100%;
+    top: 190px;
+    left: 15%;
+    display: block;
+}
+#wrapper_2 {
+  background-color: brown;
+  height: 100px;
+  width: 100px;
+  float: right;
+}
+
+
+element.style {
+  opacity: 1;
+  will-change: opacity;
+  transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
