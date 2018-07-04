@@ -3,20 +3,16 @@ import React, { Component } from 'react';
 // Material-UI 
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Avatar from '@material-ui/core/Avatar';
-import Divider from '@material-ui/core/Divider';
-import Tooltip from '@material-ui/core/Tooltip';
-import Drawer from '@material-ui/core/Drawer';
 
 // Styling
 import './ChatBox.css';
-import online from './green.png';
-import offline from './red.png';
 
+// Default user image
+import userImage from './userImage.png';
 
 var stompClient = null;
 
-export default class App extends Component {
+export default class ChatBoxComponent extends Component {
   constructor(props) {
     super(props);
     this.state =
@@ -28,6 +24,7 @@ export default class App extends Component {
         broadcastMessage: [],
         error: '',
         bottom: false,
+        curTime: ''
       };
   }
 
@@ -49,12 +46,12 @@ export default class App extends Component {
   }
 
   onConnected = () => {
-
+    
     this.setState({
       channelConnected: true
     })
 
-    // Subscribe to the public topic
+    // Subscribing to the public topic
     stompClient.subscribe('/topic/public', this.onMessageReceived);
 
     // Registering user to server
@@ -94,22 +91,19 @@ export default class App extends Component {
 
     if (message.type === 'JOIN') {
 
-      this.state.roomNotification.push(message.sender + ' joined!')
+      this.state.roomNotification.push({ 'sender': message.sender + " ~ joined!", 'status': 'online' })
 
       this.setState({
         roomNotification: this.state.roomNotification
       })
-    }
-    else if (message.type === 'LEAVE') {
+    } else if (message.type === 'LEAVE') {
 
-      this.state.roomNotification.push(message.sender + ' left!')
+      this.state.roomNotification.push({ 'sender': message.sender + " ~ left!", 'status': 'offline' })
 
       this.setState({
         roomNotification: this.state.roomNotification
       })
-    }
-    else {
-
+    } else {
       this.state.broadcastMessage.push({
         message: message.content,
         sender: message.sender
@@ -133,124 +127,151 @@ export default class App extends Component {
     });
   };
 
-  toggleDrawer = (side, open) => () => {
-    this.setState({
-      [side]: open,
-    });
-  };
-
   scrollToBottom = () => {
-    window.scrollTo(0, document.body.scrollHeight);
+    //  window.scrollTo(0, document.body.scrollHeight);
+    var object = this.refs.messageBox;
+    object.scrollTop = object.scrollHeight;
   }
 
-  getRandomColor = () => {
-    var letters = '0123456789ABCDEF';
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-  }
+  // getRandomColor = () => {
+  //   var letters = '0123456789ABCDEF';
+  //   var color = '#';
+  //   for (var i = 0; i < 6; i++) {
+  //     color += letters[Math.floor(Math.random() * 16)];
+  //   }
+  //   return color;
+  // }
 
   errorStyle = {
     color: 'red'
   }
 
-  roomNotifications = {
-    color: 'rgb(227, 241, 57)'
-  };
+  componentDidMount() {
+    this.setState({
+      curTime: new Date().toLocaleString()
+    })
 
+  }
   render() {
 
     return (
-      <div>
+      this.state.error ? <span style={this.errorStyle}>{this.state.error}</span> :
+        <div id="container">
 
-        {this.state.channelConnected ?
-          (
+          {this.state.channelConnected ?
+            (
+              <aside>
+                <header>
+                  <input type="text" placeholder="search" />
+                </header>
+                <ul >
+                  {this.state.roomNotification.map((notification, i) =>
+                    <li key={i}>
+                      <img src={userImage} alt="Default-User" id="userImage" />
+                      <div>
+                        <h2>{notification.sender}</h2>
+                        <h3>
+                          {notification.status === 'online' ? <span className="status green"></span> : <span className="status orange"></span>}
+                          {notification.status}
+                        </h3>
+                      </div>
+                    </li>
+                  )} </ul> </aside>
+            ) : (
+              <div>
+                <TextField
+                  id="user"
+                  label="Type your username"
+                  placeholder="Username"
+                  onChange={this.handleChange}
+                  margin="normal"
+                />
+                <br />
+                <Button variant="contained" color="primary" onClick={this.connect} >
+                  Start Chatting
+             </Button>
+              </div>)
+          }
 
-            this.state.roomNotification.map((notification, i) =>
-              <div id="notificationContainer" key={i}>
-                <div key={i} style={this.roomNotifications} id="wrapper_1"><Avatar>{notification[0] + notification[1]}</Avatar>
-                  {notification}
-                  <div id="online-offline">
-                    {notification.indexOf('joined') > -1 ? <img src={online} alt="online" width="20px" /> :
-                      <img src={offline} alt="offline" width="20px" />}
-                  </div>
-                  <br /><Divider /></div></div>)
-          ) : (
+          {
+            <main>
+              {this.state.channelConnected ?
+                <div>
+                  <header>
+                    <div>
+                      <h2>Welcome {this.state.username}<span className="status green"></span></h2>
+                      <h3>You have total {this.state.broadcastMessage.length} messages</h3>
+                    </div>
+                  </header>
+                  <ul id="chat" ref="messageBox">
+                    {this.state.broadcastMessage.map((msg, i) =>
+                      this.state.username === msg.sender ?
+                        <li className="you" key={i}>
+                          <div className="entete">
+                            <h2>{msg.sender} ~ (You)</h2>
+                            <h3>{this.state.curTime}</h3>
+                            <span className="status green"></span>
+                          </div>
+                          <div className="triangle"></div>
+                          <div className="message">
+                            {msg.message}
+                          </div>
+                        </li>
+                        :
+                        <li className="others">
+                          <div className="entete">
+                            <span className="status blue"></span>
+                            <h2>{msg.sender}</h2>
+                            <h3>10:12AM, Today</h3>
+                          </div>
+                          <div className="triangle"></div>
+                          <div className="message">
+                            {msg.message}
+                          </div>
+                        </li>
+                    )}
+                  </ul>
+                  <footer>
+                    <TextField
+                      id="msg"
+                      label="Type your message here..."
+                      placeholder="Press enter to send"
+                      onChange={this.handleChatMSGChange}
+                      margin="normal"
+                      value={this.state.chatMessage}
+                      onKeyPress={event => {
+                        if (event.key === 'Enter') {
+                          this.sendMessage();
+                          this.scrollToBottom();
+                        }
+                      }}
+                    />
+                  </footer>
+
+                </div>
+                : ""}
+            </main>
+          }
+          <br />
+          {this.state.channelConnected ?
             <div>
               <TextField
-                id="user"
-                label="Type your username"
-                placeholder="Username"
-                onChange={this.handleChange}
+                id="msg"
+                label="Press enter to send"
+                placeholder="Write your message here..."
+                onChange={this.handleChatMSGChange}
                 margin="normal"
-              />
-              <br />
-              <Button variant="contained" color="primary" onClick={this.connect} >
-                Start Chatting
-       </Button>
-            </div>)
-        }
-
-        {
-          this.state.error ? <span style={this.errorStyle}>{this.state.error}</span> :
-            this.state.broadcastMessage.map(
-              (msg, i) =>
-                <div key={i} >
-                  {
-                    this.state.username === msg.sender ?
-                      <div className="bubble me">
-                        <Avatar><Tooltip id="tooltip-top-start" title={msg.sender} placement="top-start">
-                          <Button>{msg.sender[0] + msg.sender[1]}</Button></Tooltip></Avatar>
-                        {msg.message}
-                      </div>
-                      :
-                      <div className="bubble you">
-                        <Avatar><Tooltip id="tooltip-top-start" title={msg.sender} placement="top-start">
-                          <Button>{msg.sender[0] + msg.sender[1]}</Button></Tooltip></Avatar>
-                        {msg.message}
-                      </div>
+                value={this.state.chatMessage}
+                onKeyPress={event => {
+                  if (event.key === 'Enter') {
+                    this.sendMessage();
+                    //  this.scrollToBottom();
                   }
-                </div>
-            )
-        }
-        <br />
-        {this.state.channelConnected ?
-          <div>
-            <Drawer
-              anchor="bottom"
-              open={this.state.bottom}
-              onClose={this.toggleDrawer('bottom', false)}
-              id="Drawer"
-            >
-              <div
-                tabIndex={0}
-                role="button"
-                onClick={this.toggleDrawer('bottom', true)}
-                onKeyDown={this.toggleDrawer('bottom', true)}
-              >
-                <TextField
-                  id="msg"
-                  label="Press enter to send"
-                  placeholder="Write your message here..."
-                  onChange={this.handleChatMSGChange}
-                  margin="normal"
-                  value={this.state.chatMessage}
-                  onKeyPress={event => {
-                    if (event.key === 'Enter') {
-                      this.sendMessage();
-                      this.scrollToBottom();
-                    }
-                  }}
-                />
-              </div>
-            </Drawer>
-            <br />
-            <Button onClick={this.toggleDrawer('bottom', true)}>Send Message</Button>
-          </div>
-          : ""}
-      </div>
+                }}
+              />
+            </div>
+            : ""}
+        </div>
     )
   }
 }
