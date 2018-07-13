@@ -6,12 +6,12 @@
  
  WebSocket 
  ============
- WebSocket is a communication protocol that makes it possible to establish a two-way communication channel between a server and a client.
+ WebSocket is a communication protocol that makes it possible to establish a two-way communication channel between a server and a  client.
  WebSocket works by first establishing a regular HTTP connection with the server and then upgrading it to a bidirectional websocket       connection by sending an Upgrade header.
  
  WebSocket Configuration
  ==========================
- * The first step is to configure the websocket endpoint and message broker for The <code>@EnableWebSocketMessageBroker</code> is used to enable our WebSocket server. I have implemented <code>WebSocketMessageBrokerConfigurer</code> interface and provide implementation for some of its methods to configure the websocket connection.
+ * The first step is to configure the websocket endpoint and message broker for which <code>@EnableWebSocketMessageBroker</code> is used to enable our WebSocket server. I have implemented <code>WebSocketMessageBrokerConfigurer</code> interface and provide implementation for some of its methods to configure the websocket connection.
  * SockJS has been used to enable fallback options for browsers that don’t support websocket.
  *  Spring frameworks STOMP implementation has been used. STOMP stands for Simple Text Oriented Messaging Protocol. It is a messaging    protocol that defines the format and rules for data exchange because WebSocket is just a communication protocol. It doesn’t define things like - How to send a message only to users who are subscribed to a particular topic, or how to send a message to a particular user. We need STOMP for these functionalities.
  * A message broker has been configured that will be used to route messages from one client to another.I have enabled a simple in-memory  message broker. But you’re free to use any other full-featured message broker like RabbitMQ or ActiveMQ.
