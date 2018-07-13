@@ -236,3 +236,35 @@ main footer a{
 #userImage{
 	height: 48px;
 }
+
+#today{
+	margin-left: 150px;
+	background-color:lightslategray;
+	padding: 6px;
+    width: 180px;
+    height: 30px;
+	text-align: center;
+	border-radius: 25px;
+	border: 2px solid whitesmoke;
+    color: white;
+    font-size: 14px;
+}
+#old{
+	margin-left: 150px;
+	background-color:lightslategray;
+	padding: 6px;
+    width: 180px;
+    height: 30px;
+	text-align: center;
+	border-radius: 25px;
+	border: 2px solid whitesmoke;
+    color: floralwhite;
+    font-size: 14px;
+
+}
+.avatar {
+    vertical-align: middle;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+}
