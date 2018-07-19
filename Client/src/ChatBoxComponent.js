@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button';
 import './ChatBox.css';
 // Default user image
 import userImage from './userImage.png';
+// import backToTop from './backToTop.png';
 
 var stompClient = null;
 
@@ -131,8 +132,8 @@ export default class ChatBoxComponent extends Component {
   };
 
   scrollToBottom = () => {
-    //  window.scrollTo(0, document.body.scrollHeight);
     var object = this.refs.messageBox;
+    if(object)
     object.scrollTop = object.scrollHeight;
   }
 
@@ -148,6 +149,9 @@ export default class ChatBoxComponent extends Component {
   componentDidUpdate() {
     if (this.state.error) {
       throw new Error('Unable to connect to chat room server.');
+    }
+    else{
+      this.scrollToBottom();
     }
   }
 
@@ -253,10 +257,10 @@ export default class ChatBoxComponent extends Component {
                     onKeyPress={event => {
                       if (event.key === 'Enter') {
                         this.sendMessage();
-                        this.scrollToBottom();
                       }
                     }}
                   />
+                  {/* <img src={backToTop} alt="Back To Top" id="top" /> */}
                 </footer>
 
               </div>
