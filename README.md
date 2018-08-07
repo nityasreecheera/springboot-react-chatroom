@@ -46,17 +46,12 @@ Client Configuration: The front end of the application has been developed using 
 
 React Setup Prerequisites and Dependencies
 ==========================
-Node
-
-NPM
-
-create-react-app
-
-material-ui
-
-react-stomp and sockjs-client
-
-Visual Studio Code
+* Node
+* NPM
+* create-react-app
+* material-ui
+* react-stomp and sockjs-client
+* Visual Studio Code
 
 Setting up the proxy
 =========================
