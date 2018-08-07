@@ -67,10 +67,10 @@ To have the Webpack development server proxy our requests to our Server, we just
 
 Features
 ===============
-* Built with Spring Boot
+* Built with Spring Boot and Reactjs
 * User login
 * Chat message broadcasting (no private message support for now)
-* Presence tracking sending notifications when users join / leave
+* Presence tracking and sending notifications when users join / leave
 * Broadcast notifications when users are typing
 
 
