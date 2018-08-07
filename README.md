@@ -65,6 +65,15 @@ To have the Webpack development server proxy our requests to our Server, we just
 
 <code>"proxy": "http://localhost:8080/", </code>
 
+Features
+===============
+* Built with Spring Boot
+* User login
+* Chat message broadcasting (no private message support for now)
+* Presence tracking sending notifications when users join / leave
+* Broadcast notifications when users are typing
+
+
 Finally
 =============
 Boot both the Server and Client apps and you're in the business. Enter any username and click Start Chatting button to enter into the chat room. If no one is available in the chat room, then you can open the app in two tabs, login with different usernames and start sending messages. You will see the below chat room UI

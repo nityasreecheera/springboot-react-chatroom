@@ -65,22 +65,25 @@ export default class ChatBoxComponent extends Component {
     })
   }
 
-  sendMessage = (event) => {
+  sendMessage = (type,value) => {
 
     if (stompClient) {
       var chatMessage = {
         sender: this.state.username,
-        content: this.state.chatMessage,
-        type: 'CHAT'
+        content: type==='TYPING' ? value : this.state.chatMessage,
+        type: type
 
       };
 
       stompClient.send("/app/sendMessage", {}, JSON.stringify(chatMessage));
 
       // clear message text box after sending the message
-      this.setState({
-        chatMessage: ''
-      })
+      if (type === "CHAT") {
+        this.setState({
+          chatMessage: ''
+        })
+      }
+
 
     }
   }
@@ -95,14 +98,43 @@ export default class ChatBoxComponent extends Component {
       this.setState({
         roomNotification: this.state.roomNotification
       })
-    } else if (message.type === 'LEAVE') {
 
-      this.state.roomNotification.push({ 'sender': message.sender + " ~ left!", 'status': 'offline' })
-
+    } 
+    else if (message.type === 'LEAVE') {
+      for (var i = 0; i < this.state.roomNotification.length; i++) {
+        if (this.state.roomNotification[i].sender === message.sender + " ~ joined!") {
+          this.state.roomNotification[i].status = "offline";
+          this.state.roomNotification[i].sender = message.sender + " ~ left!";
+          break;
+        }
+      }
       this.setState({
         roomNotification: this.state.roomNotification
       })
-    } else {
+    }
+    else if (message.type === 'TYPING') {
+      for ( i = 0; i < this.state.roomNotification.length; i++) {
+        if (this.state.roomNotification[i].sender === message.sender + " ~ joined!") {
+          if(message.content)
+          this.state.roomNotification[i].status = "typing...";
+          else
+          this.state.roomNotification[i].status = "online";
+          break;
+        }
+      }
+      this.setState({
+        roomNotification: this.state.roomNotification
+      })
+    } 
+    else if (message.type === 'CHAT') {
+
+      for ( i = 0; i < this.state.roomNotification.length; i++) {
+        if (this.state.roomNotification[i].sender === message.sender + " ~ joined!") {
+          this.state.roomNotification[i].status = "online";
+          break;
+        }
+      }
+
       this.state.broadcastMessage.push({
         message: message.content,
         sender: message.sender,
@@ -110,8 +142,12 @@ export default class ChatBoxComponent extends Component {
       })
 
       this.setState({
-        broadcastMessage: this.state.broadcastMessage
+        broadcastMessage: this.state.broadcastMessage,
+       
       })
+    }
+    else {
+     // do nothing...
     }
   }
 
@@ -119,22 +155,25 @@ export default class ChatBoxComponent extends Component {
     alert('History Not Available!\nIt is Not Yet Implemented!');
   }
 
-  handleChange = (event) => {
+  handleUserNameChange = (event) => {
     this.setState({
       username: event.target.value,
     });
   };
 
   handleChatMSGChange = (event) => {
+
     this.setState({
       chatMessage: event.target.value,
     });
+      this.sendMessage('TYPING',event.target.value);
+    
   };
 
   scrollToBottom = () => {
     var object = this.refs.messageBox;
-    if(object)
-    object.scrollTop = object.scrollHeight;
+    if (object)
+      object.scrollTop = object.scrollHeight;
   }
 
   // getRandomColor = () => {
@@ -150,7 +189,7 @@ export default class ChatBoxComponent extends Component {
     if (this.state.error) {
       throw new Error('Unable to connect to chat room server.');
     }
-    else{
+    else {
       this.scrollToBottom();
     }
   }
@@ -178,19 +217,20 @@ export default class ChatBoxComponent extends Component {
                     <div>
                       <h2>{notification.sender}</h2>
                       <h3>
-                        {notification.status === 'online' ? <span className="status green"></span> : <span className="status orange"></span>}
+                        {notification.status === 'online' || notification.status === 'typing...' ? <span className="status green"></span>:<span className="status orange"></span>}
                         {notification.status}
                       </h3>
                     </div>
                   </li>
-                )} </ul> </aside>
+                )} </ul>
+            </aside>
           ) : (
             <div>
               <TextField
                 id="user"
                 label="Type your username"
                 placeholder="Username"
-                onChange={this.handleChange}
+                onChange={this.handleUserNameChange}
                 margin="normal"
               />
               <br />
@@ -207,7 +247,7 @@ export default class ChatBoxComponent extends Component {
                 <header>
                   <div>
                     <h2>Welcome {this.state.username} <span> </span> <span className="status green"></span></h2>
-                    <h3>You have total {this.state.broadcastMessage.length} messages</h3>
+                    <h3>There are total {this.state.broadcastMessage.length} messages in the room.</h3>
                   </div>
                 </header>
                 <ul id="chat" ref="messageBox">
@@ -218,9 +258,9 @@ export default class ChatBoxComponent extends Component {
                       <li className="you" key={i}>
                         <div className="entete">
                           <h2><img src={userImage} alt="Default-User" className="avatar" />
+                            <span> </span>
+                            {msg.sender} ~ (You)</h2>
                           <span> </span>
-                          {msg.sender} ~ (You)</h2>
-                          <span> </span> 
                           <span className="status green"></span>
                         </div>
                         <div className="triangle"></div>
@@ -245,7 +285,9 @@ export default class ChatBoxComponent extends Component {
                         <div><h3>{msg.dateTime}</h3></div>
                       </li>
                   )}
+
                 </ul>
+
                 <footer>
                   <TextField
                     id="msg"
@@ -256,7 +298,7 @@ export default class ChatBoxComponent extends Component {
                     value={this.state.chatMessage}
                     onKeyPress={event => {
                       if (event.key === 'Enter') {
-                        this.sendMessage();
+                        this.sendMessage('CHAT');
                       }
                     }}
                   />
