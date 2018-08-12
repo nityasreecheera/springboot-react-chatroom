@@ -4,7 +4,9 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^1.2.2",
+    "@material-ui/icons": "^2.0.1",
     "react": "^16.4.1",
+    "react-bell-icon": "^1.0.0",
     "react-dom": "^16.4.1",
     "react-error-boundary-component-fallback2": "^1.0.0",
     "react-scripts": "1.1.4",

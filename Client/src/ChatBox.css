@@ -6,7 +6,7 @@ body{
 	font-family:Arial;
 }
 #container{
-	width:750px;
+	width:1000px;
 	height:710px;
 	background:#eff3f7;
 	margin:0 auto;
@@ -55,7 +55,8 @@ aside ul{
 	margin:0;
 	list-style-type:none;
 	overflow-y:scroll;
-	height:690px;
+	height:600px;
+	width: 260px;
 }
 aside li{
 	padding:10px 0;
@@ -63,7 +64,7 @@ aside li{
 aside li:hover{
 	background-color:#5e616a;
 }
-h2,h3{
+h2,h3,h5,h6{
 	margin:0;
 }
 aside li img{
@@ -111,11 +112,13 @@ aside li h3{
 main header{
 	height:110px;
 	padding:30px 20px 30px 40px;
-	background: #3b3e49
+	background: #3b3e49;
+	width:1000px;
 }
 main header > *{
 	display:inline-block;
 	vertical-align:top;
+	width: 1000px;
 }
 main header img:first-child{
 	border-radius:50%;
@@ -141,7 +144,7 @@ main header h2{
 main header h3{
 	font-size:14px;
 	font-weight:normal;
-	color:#7e818a;
+	color:lightseagreen
 }
 
 #chat{
@@ -150,6 +153,7 @@ main header h3{
 	list-style-type:none;
 	overflow-y:scroll;
 	height:535px;
+	width: 742px;
 	border-top:2px solid #fff;
 	border-bottom:2px solid #fff;
 }
@@ -168,7 +172,7 @@ main header h3{
 	margin-bottom:5px;
 }
 #chat .message{
-	padding:20px;
+	padding:0px 25px 5px 30px;
 	color:#fff;
 	line-height:25px;
 	max-width:90%;
@@ -198,11 +202,12 @@ main header h3{
 }
 #chat .others .triangle{
 		border-color: transparent transparent #6fbced transparent;
-		margin-left:375px;
+		margin-left:612px;
 }
 
 main footer{
 	height:155px;
+	width: 750px;
 }
 main footer textarea{
 	resize:none;
@@ -237,10 +242,10 @@ main footer a{
 }
 
 #today{
-	margin-left: 150px;
-	background-color:lightslategray;
+	margin-left: 310px;
+	background-color:darkseagreen;
 	padding: 6px;
-    width: 180px;
+    width: 80px;
     height: 30px;
 	text-align: center;
 	border-radius: 25px;
@@ -249,10 +254,10 @@ main footer a{
     font-size: 14px;
 }
 #old{
-	margin-left: 150px;
-	background-color:lightslategray;
+	margin-left: 310px;
+	background-color:lightblue;
 	padding: 6px;
-    width: 180px;
+    width: 80px;
     height: 30px;
 	text-align: center;
 	border-radius: 25px;
@@ -266,4 +271,16 @@ main footer a{
     width: 35px;
     height: 35px;
     border-radius: 50%;
+}
+.badge{
+	padding:0px 2px 0px 630px;
+}
+#usernameDialogNotifications{
+	padding:0px 25px 5px 0px;
+	color:black;
+	max-width:70%;
+	display:inline-block;
+	text-align:left;
+	border-radius:5px;
+	word-wrap: break-word;
 }

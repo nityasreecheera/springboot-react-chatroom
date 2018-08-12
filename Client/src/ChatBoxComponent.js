@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 // Material-UI 
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import Badge from '@material-ui/core/Badge';
+import Notifications from './NotificationsComponent'
+import BellIcon from 'react-bell-icon';
+
 // Styling
 import './ChatBox.css';
 // Default user image
@@ -22,7 +26,9 @@ export default class ChatBoxComponent extends Component {
         broadcastMessage: [],
         error: '',
         bottom: false,
-        curTime: ''
+        curTime: '',
+        openNotifications: false,
+        bellRing:false
       };
   }
 
@@ -90,57 +96,64 @@ export default class ChatBoxComponent extends Component {
 
     var message = JSON.parse(payload.body);
 
-    this.setRoomNotifications(message);
+    if (message.type === 'JOIN') {
 
-  }
+      this.state.roomNotification.push({ 'sender': message.sender + " ~ joined", 'status': 'online', 'dateTime': message.dateTime })
 
-  setRoomNotifications = (message) => {
-
-    if (message.type === "JOIN") {
-      this.state.roomNotification.push({ 'sender': message.sender + " ~ joined!", 'status': 'online' })
       this.setState({
-        roomNotification: this.state.roomNotification
+        roomNotification: this.state.roomNotification,
+        bellRing:true
+      })
+
+    }
+    else if (message.type === 'LEAVE') {
+      this.state.roomNotification.map((notification, i) => {
+        if (notification.sender === message.sender + " ~ joined") {
+          notification.status = "offline";
+          notification.sender = message.sender + " ~ left";
+          notification.dateTime = message.dateTime;
+        }
+      })
+      this.setState({
+        roomNotification: this.state.roomNotification,
+        bellRing:true
       })
     }
+    else if (message.type === 'TYPING') {
 
-    this.state.roomNotification.map((notification, i) => {
-
-      if (notification.sender === message.sender + " ~ joined!") {  
-         if (message.type === "LEAVE") {
-          notification.status = "offline";
-          notification.sender = message.sender + " ~ left!";
-          this.setState({
-            roomNotification: this.state.roomNotification
-          })
-        }
-        else if (message.type === "TYPING") {
+      this.state.roomNotification.map((notification, i) => {
+        if (notification.sender === message.sender + " ~ joined") {
           if (message.content)
             notification.status = "typing...";
           else
             notification.status = "online";
-          this.setState({
-            roomNotification: this.state.roomNotification
-          })
         }
-        else if (message.type === "CHAT") {
+
+      })
+      this.setState({
+        roomNotification: this.state.roomNotification
+      })
+    }
+    else if (message.type === 'CHAT') {
+
+      this.state.roomNotification.map((notification, i) => {
+        if (notification.sender === message.sender + " ~ joined") {
           notification.status = "online";
-          this.state.broadcastMessage.push({
-            message: message.content,
-            sender: message.sender,
-            dateTime: message.dateTime
-          })
-
-          this.setState({
-            broadcastMessage: this.state.broadcastMessage,
-
-          })
         }
-        else {
-          // nothing
-        }
-      }
-      return true;
-    })
+      })
+      this.state.broadcastMessage.push({
+        message: message.content,
+        sender: message.sender,
+        dateTime: message.dateTime
+      })
+      this.setState({
+        broadcastMessage: this.state.broadcastMessage,
+
+      })
+    }
+    else {
+      // do nothing...
+    }
   }
 
   fetchHostory = () => {
@@ -161,7 +174,16 @@ export default class ChatBoxComponent extends Component {
     this.sendMessage('TYPING', event.target.value);
 
   };
-
+  openUserNotifications = () => {
+    this.setState({
+      openNotifications: true
+    })
+  }
+  handleCloseNotifications = () => {
+    this.setState({
+      openNotifications: false
+    })
+  }
   scrollToBottom = () => {
     var object = this.refs.messageBox;
     if (object)
@@ -191,6 +213,13 @@ export default class ChatBoxComponent extends Component {
       curTime: new Date().toLocaleString()
     })
 
+    this.timerID = setInterval(
+      () => this.state.bellRing?this.setState({
+        bellRing:false
+      }):"",
+      10000
+    );
+
   }
   render() {
 
@@ -207,7 +236,10 @@ export default class ChatBoxComponent extends Component {
                   <li key={i}>
                     <img src={userImage} alt="Default-User" id="userImage" />
                     <div>
-                      <h2>{notification.sender}</h2>
+                      <div><h2 style={{ textAlign: "left", float: "left" }}>{notification.sender.split('~')[0]}</h2>
+                        {/* <h3 style={{textAlign:"right", float:"right"}}>{notification.sender.split('~')[1]}</h3> */}
+                      </div>
+                      <br />
                       <h3>
                         {notification.status === 'online' || notification.status === 'typing...' ? <span className="status green"></span> : <span className="status orange"></span>}
                         {notification.status}
@@ -238,8 +270,15 @@ export default class ChatBoxComponent extends Component {
               <div>
                 <header>
                   <div>
-                    <h2>Welcome {this.state.username} <span> </span> <span className="status green"></span></h2>
-                    <h3>There are total {this.state.broadcastMessage.length} messages in the room.</h3>
+                    <Badge className="badge" badgeContent={this.state.roomNotification.length} color="secondary" onClick={this.openUserNotifications}>
+                    <BellIcon width='40' active={this.state.bellRing} animate={this.state.bellRing} color="white" width="25px"/>
+                    </Badge>
+                    <Notifications open={this.state.openNotifications} handleClose={this.handleCloseNotifications} 
+                    notifications={this.state.roomNotification} roomMessages={this.state.broadcastMessage} />
+
+                  </div>
+                  <div>
+                    <h2>{this.state.username} <span> </span> <span className="status green"></span></h2>
                   </div>
                 </header>
                 <ul id="chat" ref="messageBox">
@@ -296,6 +335,7 @@ export default class ChatBoxComponent extends Component {
                     }}
                   />
                   {/* <img src={backToTop} alt="Back To Top" id="top" /> */}
+
                 </footer>
 
               </div>
