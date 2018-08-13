@@ -271,7 +271,7 @@ export default class ChatBoxComponent extends Component {
                 <header>
                   <div>
                     <Badge className="badge" badgeContent={this.state.roomNotification.length} color="secondary" onClick={this.openUserNotifications}>
-                    <BellIcon width='40' active={this.state.bellRing} animate={this.state.bellRing} color="white" width="25px"/>
+                    <BellIcon  active={this.state.bellRing} animate={this.state.bellRing} color="white" width="25px"/>
                     </Badge>
                     <Notifications open={this.state.openNotifications} handleClose={this.handleCloseNotifications} 
                     notifications={this.state.roomNotification} roomMessages={this.state.broadcastMessage} />
