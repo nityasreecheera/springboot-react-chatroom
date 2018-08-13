@@ -64,7 +64,7 @@ Features
 ===============
 * Built with Spring Boot and Reactjs
 * User login
-* Chat message broadcasting (no private message support for now)
+* Chat message broadcasting (no private message and chat history support for now, I may implement it later in free time)
 * Presence tracking and sending notifications when users join / leave
 * Broadcast notifications when users are typing
 
