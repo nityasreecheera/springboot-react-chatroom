@@ -1,8 +1,9 @@
 # springboot-react-chatroom
  Using Spring Boot with WebSocket API  and React with Material-UI to build a simple group chat application onfiguration
  
- Server Configuration: I have used spring boot configurations to configure websocket connection with STOMP and sockJS
+ Server Configuration: 
  ========================
+Spring boot configurations to configure websocket connection with STOMP and sockJS
  
  WebSocket 
  ============
@@ -33,8 +34,9 @@ Spring Boot Setup Prerequisites
  Maven
 
 
-Client Configuration: The front end of the application has been developed using react js components 
+Client Configuration: 
 ========================
+The front end of the application has been developed using react js components.
 
 * The connect() function uses SockJS and stomp client to connect to the /ws endpoint that we configured in Spring Boot.
 
