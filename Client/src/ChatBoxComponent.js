@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-// Material-UI 
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import Badge from '@material-ui/core/Badge';
-import Notifications from './NotificationsComponent'
-import BellIcon from 'react-bell-icon';
+
+import Menu from './menu-app-bar/MenuAppBar'
+import Aside from './aside/Aside'
+import Login from './login/Login'
+import Footer from './footer/Footer'
 
 // Styling
 import './ChatBox.css';
@@ -28,13 +27,17 @@ export default class ChatBoxComponent extends Component {
         bottom: false,
         curTime: '',
         openNotifications: false,
-        bellRing:false
+        bellRing: false
       };
   }
 
-  connect = (event) => {
+  connect = (userName) => {
 
-    if (this.state.username) {
+    if (userName) {
+
+      this.setState({
+        username: userName
+      })
 
       const Stomp = require('stompjs')
 
@@ -76,7 +79,7 @@ export default class ChatBoxComponent extends Component {
     if (stompClient) {
       var chatMessage = {
         sender: this.state.username,
-        content: type === 'TYPING' ? value : this.state.chatMessage,
+        content: type === 'TYPING' ? value : value,
         type: type
 
       };
@@ -84,11 +87,7 @@ export default class ChatBoxComponent extends Component {
       stompClient.send("/app/sendMessage", {}, JSON.stringify(chatMessage));
 
       // clear message text box after sending the message
-      if (type === "CHAT") {
-        this.setState({
-          chatMessage: ''
-        })
-      }
+
     }
   }
 
@@ -102,7 +101,7 @@ export default class ChatBoxComponent extends Component {
 
       this.setState({
         roomNotification: this.state.roomNotification,
-        bellRing:true
+        bellRing: true
       })
 
     }
@@ -116,7 +115,7 @@ export default class ChatBoxComponent extends Component {
       })
       this.setState({
         roomNotification: this.state.roomNotification,
-        bellRing:true
+        bellRing: true
       })
     }
     else if (message.type === 'TYPING') {
@@ -160,30 +159,6 @@ export default class ChatBoxComponent extends Component {
     alert('History Not Available!\nIt is Not Yet Implemented!');
   }
 
-  handleUserNameChange = (event) => {
-    this.setState({
-      username: event.target.value,
-    });
-  };
-
-  handleChatMSGChange = (event) => {
-
-    this.setState({
-      chatMessage: event.target.value,
-    });
-    this.sendMessage('TYPING', event.target.value);
-
-  };
-  openUserNotifications = () => {
-    this.setState({
-      openNotifications: true
-    })
-  }
-  handleCloseNotifications = () => {
-    this.setState({
-      openNotifications: false
-    })
-  }
   scrollToBottom = () => {
     var object = this.refs.messageBox;
     if (object)
@@ -214,9 +189,9 @@ export default class ChatBoxComponent extends Component {
     })
 
     this.timerID = setInterval(
-      () => this.state.bellRing?this.setState({
-        bellRing:false
-      }):"",
+      () => this.state.bellRing ? this.setState({
+        bellRing: false
+      }) : "",
       10000
     );
 
@@ -227,140 +202,69 @@ export default class ChatBoxComponent extends Component {
       <div id="container">
         {this.state.channelConnected ?
           (
-            <aside>
-              <header>
-                <input type="text" placeholder="search" />
-              </header>
-              <ul >
-                {this.state.roomNotification.map((notification, i) =>
-                  <li key={i}>
-                    <img src={userImage} alt="Default-User" id="userImage" />
-                    <div>
-                      <div><h2 style={{ textAlign: "left", float: "left" }}>{notification.sender.split('~')[0]}</h2>
-                        {/* <h3 style={{textAlign:"right", float:"right"}}>{notification.sender.split('~')[1]}</h3> */}
-                      </div>
-                      <br />
-                      <h3>
-                        {notification.status === 'online' || notification.status === 'typing...' ? <span className="status green"></span> : <span className="status orange"></span>}
-                        {notification.status}
-                      </h3>
-                    </div>
-                  </li>
-                )} </ul>
-            </aside>
-          ) : (
+
+
             <div>
-              <TextField
-                id="user"
-                label="Type your username"
-                placeholder="Username"
-                onChange={this.handleUserNameChange}
-                margin="normal"
-              />
-              <br />
-              <Button variant="contained" color="primary" onClick={this.connect} >
-                Start Chatting
-             </Button>
-            </div>)
+              <Menu roomNotification={this.state.roomNotification}
+                bellRing={this.state.bellRing}
+                openNotifications={this.state.openNotifications}
+                username={this.state.username}
+                broadcastMessage={this.state.broadcastMessage}/>
+                
+              <Aside  roomNotification={this.state.roomNotification}
+                bellRing={this.state.bellRing}
+                openNotifications={this.state.openNotifications}
+                username={this.state.username}
+                broadcastMessage={this.state.broadcastMessage} />
+             
+              
+              <ul id="chat"  ref="messageBox">
+                {/* {this.state.broadcastMessage.length ?
+                  [<div id="history"><div id="old" onClick={this.fetchHostory}>Older</div><hr /><div id="today">Today</div></div>] : ""} */}
+                {this.state.broadcastMessage.map((msg, i) =>
+                  this.state.username === msg.sender ?
+                    <li className="you" key={i}>
+                      <div className="entete">
+                        <h2><img src={userImage} alt="Default-User" className="avatar" />
+                          <span> </span>
+                         <span className="sender"> {msg.sender} ~ (You)</span></h2>
+                        <span> </span>
+                        {/* <span className="status green"></span> */}
+                      </div>
+                      <div className="triangle"></div>
+                      <div className="message">
+                        {msg.message}
+                      </div>
+                      <div><h3>{msg.dateTime}</h3></div>
+                    </li>
+                    :
+                    <li className="others">
+                      <div className="entete">
+                        {/* <span className="status blue"></span> */}
+                        <span> </span>
+                        <img src={userImage} alt="Default-User" className="avatar" />
+                        <span> </span>
+                        <span className="sender">{msg.sender}</span>
+                      </div>
+                      <div className="triangle"></div>
+                      <div className="message">
+                        {msg.message}
+                      </div>
+                      <div><h3>{msg.dateTime}</h3></div>
+                    </li>
+                )}
+
+              </ul>
+              <div></div>
+               <Footer sendMessage={this.sendMessage}/>
+            </div>
+         
+
+          ) : (
+            <Login connect={this.connect} />
+            
+          )
         }
-
-        {
-          <main>
-            {this.state.channelConnected ?
-              <div>
-                <header>
-                  <div>
-                    <Badge className="badge" badgeContent={this.state.roomNotification.length} color="secondary" onClick={this.openUserNotifications}>
-                    <BellIcon  active={this.state.bellRing} animate={this.state.bellRing} color="white" width="25px"/>
-                    </Badge>
-                    <Notifications open={this.state.openNotifications} handleClose={this.handleCloseNotifications} 
-                    notifications={this.state.roomNotification} roomMessages={this.state.broadcastMessage} />
-
-                  </div>
-                  <div>
-                    <h2>{this.state.username} <span> </span> <span className="status green"></span></h2>
-                  </div>
-                </header>
-                <ul id="chat" ref="messageBox">
-                  {this.state.broadcastMessage.length ?
-                    [<div id="history"><div id="old" onClick={this.fetchHostory}>Older</div><hr /><div id="today">Today</div></div>] : ""}
-                  {this.state.broadcastMessage.map((msg, i) =>
-                    this.state.username === msg.sender ?
-                      <li className="you" key={i}>
-                        <div className="entete">
-                          <h2><img src={userImage} alt="Default-User" className="avatar" />
-                            <span> </span>
-                            {msg.sender} ~ (You)</h2>
-                          <span> </span>
-                          <span className="status green"></span>
-                        </div>
-                        <div className="triangle"></div>
-                        <div className="message">
-                          {msg.message}
-                        </div>
-                        <div><h3>{msg.dateTime}</h3></div>
-                      </li>
-                      :
-                      <li className="others">
-                        <div className="entete">
-                          <span className="status blue"></span>
-                          <span> </span>
-                          <img src={userImage} alt="Default-User" className="avatar" />
-                          <span> </span>
-                          <h2>{msg.sender}</h2>
-                        </div>
-                        <div className="triangle"></div>
-                        <div className="message">
-                          {msg.message}
-                        </div>
-                        <div><h3>{msg.dateTime}</h3></div>
-                      </li>
-                  )}
-
-                </ul>
-
-                <footer>
-                  <TextField
-                    id="msg"
-                    label="Type your message here..."
-                    placeholder="Press enter to send"
-                    onChange={this.handleChatMSGChange}
-                    margin="normal"
-                    value={this.state.chatMessage}
-                    fullWidth={true}
-                    onKeyPress={event => {
-                      if (event.key === 'Enter') {
-                        this.sendMessage('CHAT');
-                      }
-                    }}
-                  />
-                  {/* <img src={backToTop} alt="Back To Top" id="top" /> */}
-
-                </footer>
-
-              </div>
-              : ""}
-          </main>
-        }
-        <br />
-        {this.state.channelConnected ?
-          <div>
-            <TextField
-              id="msg"
-              label="Press enter to send"
-              placeholder="Write your message here..."
-              onChange={this.handleChatMSGChange}
-              margin="normal"
-              value={this.state.chatMessage}
-              onKeyPress={event => {
-                if (event.key === 'Enter') {
-                  this.sendMessage();
-                  //  this.scrollToBottom();
-                }
-              }}
-            />
-          </div>
-          : ""}
       </div>
     )
   }

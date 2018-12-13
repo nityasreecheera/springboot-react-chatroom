@@ -23,8 +23,11 @@ export default class NotificationsComponent extends Component {
 
             <Dialog
                 open={this.props.open}
-                onClose={this.handleClose}
+                onClose={this.props.handleClose}
                 aria-labelledby="responsive-dialog-title"
+                onEscapeKeyDown= {this.props.handleClose}
+                autoScrollBodyContent={true}
+	
             >
                 <DialogTitle id="responsive-dialog-title">{"Notifications"}</DialogTitle>
                 <DialogContent>
