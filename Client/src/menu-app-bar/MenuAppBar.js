@@ -1,16 +1,15 @@
 
 import React from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
-import Switch from '@material-ui/core/Switch';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
+
+
+
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import './MenuAppBar.css'
@@ -21,18 +20,7 @@ import BellIcon from 'react-bell-icon';
 
 
 
-const styles = {
-  root: {
-    flexGrow: 1,
-  },
-  flex: {
-    flex: 1,
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
-};
+
 
 export default class MenuAppBar extends React.Component {
 
@@ -40,34 +28,25 @@ export default class MenuAppBar extends React.Component {
   constructor(props) {
     super(props);
     this.state =
-        {
-            openNotifications: false
-        };
-}
+      {
+        openNotifications: false,
+        anchorEl: null,
+      };
+  }
 
-openUserNotifications = () => {
+  handleOpenNotifications = () => {
     this.setState({
-        openNotifications: true
+      openNotifications: true
     })
-}
+  }
 
-handleCloseNotifications = () => {
+  handleCloseNotifications = () => {
     this.setState({
-        openNotifications: false
+      openNotifications: false
     })
-}
+  }
 
-
-  state = {
-    auth: true,
-    anchorEl: null,
-  };
-
-  handleChange = (event, checked) => {
-    this.setState({ auth: checked });
-  };
-
-  handleMenu = event => {
+  handleClick = event => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
@@ -75,8 +54,12 @@ handleCloseNotifications = () => {
     this.setState({ anchorEl: null });
   };
 
+  handleLogOut = () => {
+    window.location.reload();
+  };
+
   render() {
-    const { classes } = this.props;
+    
     const { auth, anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
@@ -93,10 +76,10 @@ handleCloseNotifications = () => {
         <AppBar position="static">
           <Toolbar>
             <IconButton className="" color="inherit" aria-label="Menu">
-              <MenuIcon />
+              <MenuIcon onClick={this.handleClick} />
             </IconButton>
             <Typography variant="title" color="inherit" className="">
-            {this.props.username} <span> </span> <span className="status green"></span>
+              {this.props.username} <span> </span> <span className="status green"></span>
             </Typography>
             {auth && (
               <div>
@@ -108,36 +91,31 @@ handleCloseNotifications = () => {
                 >
                   <AccountCircle />
                 </IconButton>
-                {/* <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  open={open}
-                  onClose={this.handleClose}
-                >
-                  <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                  <MenuItem onClick={this.handleClose}>My account</MenuItem>
-                </Menu> */}
+
               </div>
             )}
           </Toolbar>
           <div>
-                        
-                            <Badge className="badge" badgeContent={this.props.roomNotification.length} color="secondary" onClick={this.openUserNotifications}>
-                                <BellIcon active={this.props.bellRing} animate={this.props.bellRing} color="white" width="25px" />
-                            </Badge>
-                            <Notifications open={this.state.openNotifications} handleClose={this.handleCloseNotifications}
-                                notifications={this.props.roomNotification} roomMessages={this.props.broadcastMessage} />
-                               
-                        </div>
+
+            <Badge className="badge" badgeContent={this.props.roomNotification.length} color="secondary" onClick={this.handleOpenNotifications}>
+              <BellIcon active={this.props.bellRing} animate={this.props.bellRing} color="white" width="25px" />
+            </Badge>
+            <Notifications open={this.state.openNotifications} handleClose={this.handleCloseNotifications}
+              notifications={this.props.roomNotification} roomMessages={this.props.broadcastMessage} />
+
+          </div>
         </AppBar>
+        <Menu
+          id="simple-menu"
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={this.handleClose}
+        >
+          <MenuItem onClick={this.handleClose}>My account</MenuItem>
+          <MenuItem onClick={this.handleClose}>Broadcast </MenuItem>
+          <MenuItem onClick={this.handleClose}>Starred </MenuItem>
+          <MenuItem onClick={this.handleLogOut}>Logout</MenuItem>
+        </Menu>
       </div>
     );
   }
